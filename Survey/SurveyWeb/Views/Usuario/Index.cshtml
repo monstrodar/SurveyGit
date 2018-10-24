@@ -1,0 +1,163 @@
+﻿
+@{
+    ViewBag.Title = "Alterar Usuário";
+}
+
+@section scripts {
+
+
+    <script type="text/javascript">
+        $("#btnConfirmar").click(function () {
+            var msg = "";
+            if ($("#txtNomeNovo").val() == "") {
+                msg += ". Informe o Nome.<br />";
+            }
+            if ($("#txtEmailNovo").val() == "") {
+                msg += ". Informe Email.<br />";
+            }
+            if ($("#txtSenhaNovo2").val() == "") {
+                msg += ". Confirme a Senha.<br />";
+            }
+            if ($("#txtSenhaNovo").val() == "") {
+                msg += ". Informe a Senha.<br />";
+            }
+            if ($("#txtSenhaNovo").val() != $("#txtSenhaNovo2").val()) {
+                msg += ". As Senhas não conferem.<br />";
+            }
+            if (msg.length > 0) {
+                $("#divErros2").html(msg);
+                $("#divErros2").show(300);
+                return false;
+            }
+            msg = "ALTERAÇÃO REALIZADA COM SUCESSO";
+            $("#divErros2").html(msg);
+            $("#divErros2").show(300);
+            $("#alterarUsuario2").submit();
+        });
+    </script>
+
+
+    <script type="text/javascript">
+
+        $("#btnExcluir").click(function () {
+
+            var msg = "";
+            var id = $("#txtIdNovo").val();
+            var email = $("#txtEmailNovo").val();
+            var nome = $("#txtNomeNovo").val();
+            var senha = $("#txtSenhaNovo").val();
+            var senha2 = $("#txtSenhaNovo2").val();
+            if (email == "") {
+                msg += "Por favor, informe um e-mail para o usuário.<br />";
+            }
+            if (nome.length < 3) {
+                msg += "Por favor, informe um nome válido para o usuário.<br />";
+            }
+            if (senha.length < 6) {
+                msg += "Por favor, informe uma senha com pelo menos 6 caracteres.<br />";
+            }
+            if (senha2 != senha) {
+                msg += "A senha e a confirmação da senha não conferem.<br />"
+            }
+            if (msg.length > 0) {
+                $("#divErros2").html(msg);
+                $("#divErros2").show(300);
+                return false;
+
+            }
+            else {
+                $("#divLoading").show(300);
+                $.ajax({
+                    type: 'POST',
+                    url: '/Usuario/Excluir',
+                    data: { Id: id, Email: email, Nome: nome, Senha: senha },
+                    success: function (result) {
+                        $("#divLoading").hide(300);
+                        if (result.length > 0) {
+                         //   Mensagem("divAlertaNovoUsuario", result)
+                            
+                            $("#divErros2").html(msg);
+                            $("#divErros2").show(300);
+                            location.href = '/Home/Logout';
+                            return false;
+                        }
+                        else {
+                            location.href = '/Home/Logout';
+                          //  window.location.href = "/Home/Index";
+
+
+                        }
+                    },
+                    error: function (XMLHttpRequest, txtStatus, errorThrown) {
+                        alert("Status: " + txtStatus); alert("Error: " + errorThrown);
+                        $("#divLoading").hide(300);
+                    }
+                });
+            }
+        });
+
+    </script>
+    
+    
+    <script type="text/javascript">
+        $("#btnBuscar").click(function () {
+            var msg = "";
+            if ($("#txtId").val() == "") {
+                msg += ". Informe o ID.<br />";
+            }
+            if (msg.length > 0) {
+                $("#divErros3").html(msg);
+                $("#divErros3").show(300);
+                return false;
+            }
+            $("#buscarUsuario2").submit();
+        });
+
+    </script>
+
+}
+@{
+    HttpCookie ck = Request.Cookies["token"];
+    //   if (ck != null && int.Parse(ck.Values["idUsuario"].ToString()) > 0){
+
+    //}
+
+}
+
+<h3>Alterar Usuário</h3>
+<form method="post" name="alterarUsuario2" id="alterarUsuario2" action="/Usuario/Gravar">
+    <div class="form-group">
+        <label for="txtId">ID:</label>
+        <input type="text" name="txtIdNovo" id="txtIdNovo" readonly="readonly" value="@ck.Values["idUsuario"].ToString()" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="txtEmailNovo">Defina seu e-mail:</label>
+        <input type="text" name="txtEmailNovo" id="txtEmailNovo" value="@ck.Values["email"].ToString()" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="txtNomeNovo">Defina seu Nome:</label>
+        <input type="text" name="txtNomeNovo" id="txtNomeNovo" value="@ck.Values["nomeUsuario"].ToString()" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="txtSenhaNovo">Define sua senha:</label>
+        <input type="password" name="txtSenhaNovo" id="txtSenhaNovo" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="txtSenha2">Confirme sua senha:</label>
+        <input type="password" name="txtSenhaNovo2" id="txtSenhaNovo2" class="form-control" />
+    </div>
+    <div class="form-inline">
+        <button type="button" name="btnConfirmar" id="btnConfirmar" class="btn btn-success">Confirmar</button>
+        <button type="button" name="btnExcluir" id="btnExcluir" class="btn btn-danger" onclick="return confirm('Deseja realmente excluir ?');">
+            Excluir
+        </button>
+        <button type="button" name="btnCancelar" id="btnCancelar" class="btn btn-warning"
+                onclick="location.href='@Url.Action("Index","Dashboard")';">
+            Cancelar
+        </button>
+    </div>
+
+    <span class="text-danger">@ViewBag.Erro</span>
+</form>
+<div id="divErros2" style="display:none" class="alert alert-warning" role="alert">...</div>
+

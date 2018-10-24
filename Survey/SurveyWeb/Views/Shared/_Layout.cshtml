@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey NET - @ViewBag.Title</title>
+    <link href="~/Content/Site.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/Content/ie10-viewport-bug-workaround.css" rel="stylesheet" type="text/css" />
+    <script src="~/Scripts/modernizr-2.6.2.js"></script>
+    <script src="~/Scripts/ie-emulation-modes-warning.js"></script>
+    <link href="~/Content/jquery.fancybox.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Survey NET", "Index", "Dashboard", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            @{
+                HttpCookie ck = Request.Cookies["token"];
+                if (ck != null && int.Parse(ck.Values["idUsuario"].ToString()) > 0)
+                {
+                    <div class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="/Dashboard">Dashboard</a></li>
+                            <li><a href="/Questionario">Questionários</a></li>
+                            <li><a href="/Pergunta">Perguntas</a></li>
+                            <li><a href="#">Relatórios</a></li>
+                        </ul>
+                        <ul id="navbar2" class="nav navbar-nav navbar-right">
+                            <li class="dropdown">
+                                <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                                    <span class="glyphicon glyphicon-user"></span> @ck.Values["nomeUsuario"].ToString()<span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="../Usuario/Index">Alterar dados</a></li>
+                                    <li><a href="/Home/Logout">Sair</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="container body-content">
+        <div class="loading" id="divLoading">
+            <img src="~/Content/images/loading.gif" style="width:32px" alt="loading..." /> Loading...
+        </div>
+
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Survey NET</p>
+        </footer>
+    </div>
+
+    @*<script src="~/Scripts/jquery-1.10.2.min.js"></script>*@
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/ie10-viewport-bug-workaround.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.fancybox.min.js"></script>
+    <script src="~/Scripts/bootbox.min.js"></script>
+    @RenderSection("scripts", false)
+</body>
+</html>
